@@ -5,15 +5,24 @@ const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
 
+
+window.addEventListener("keydown", add);
+function add(event) {
+  switch (event.key) {
+    case "Enter":
+      checkWeather();
+      break;
+  }
+}
+
 async function checkWeather() {
-
-    const city = searchBox.value.trim(); // <-- Get the city from the input field
-
-    // Check if the city is empty
-    if (!city) {
-      alert("Please enter a city name.");
-      return; // Stop the function if no city is provided
-    }
+  const city = searchBox.value.trim(); // <-- Get the city from the input field
+  saveWeather();
+  // Check if the city is empty
+  if (!city) {
+    alert("Please enter a city name.");
+    return; // Stop the function if no city is provided
+  }
 
   const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
 
@@ -21,7 +30,8 @@ async function checkWeather() {
     document.querySelector(".error").style.display = "block";
     document.querySelector(".weather").style.display = "none";
   }else{
-    var data = await response.json();
+    let data = await response.json();
+    console.log(data);
 
     document.querySelector(".city").innerHTML = data.name;
     document.querySelector(".temp").innerHTML =
@@ -43,12 +53,23 @@ async function checkWeather() {
 
     document.querySelector(".weather").style.display = "block";
     document.querySelector(".error").style.display = "none";
-
-    searchBox.value = ""; 
-
+    
+    searchBox.value = "";
   }
-
-  
 }
+
 searchBtn.addEventListener("click", checkWeather);
 
+
+
+
+
+function saveWeather(){
+  localStorage.setItem("weather", city);
+}
+function showWeather(){
+  city = localStorage.getItem("weather");
+  searchBox.innerHTML = city;
+}
+document.addEventListener("DOMContentLoaded", showWeather());
+console.log(city = localStorage.getItem("weather"));
